@@ -70,13 +70,17 @@ rentby/
 ├── api/                   # REST API for agents
 │   ├── src/
 │   │   └── index.js       # API server
+│   ├── tests/             # API integration tests
+│   │   └── api.test.js
 │   ├── package.json
 │   └── API.md            # API documentation
 ├── docs/                  # Architecture docs
 │   └── ARCHITECTURE.md
+├── tests/                 # Smart contract integration tests
+│   ├── rentby.ts         # Anchor test suite
+│   └── README.md         # Testing guide
 ├── app/                   # Frontend (Next.js) - Coming soon
 ├── mobile/                # Solana Mobile (Expo) - Coming soon
-├── tests/                 # Integration tests - Coming soon
 ├── README.md
 └── .gitignore
 ```
@@ -188,8 +192,9 @@ curl -X POST http://localhost:3001/api/search \
 - ✅ REST API implementation (Node.js + Express)
 - ✅ API documentation
 - ✅ Architecture documentation
+- ✅ Smart contract integration tests (Anchor)
+- ✅ API unit tests (Jest + Supertest)
 - 🚧 Frontend UI (Next.js) - Coming soon
-- 🚧 Integration tests - Coming soon
 - 🚧 Production deployment - Coming soon
 
 ## Roadmap
@@ -197,9 +202,9 @@ curl -X POST http://localhost:3001/api/search \
 ### Phase 1: Core Platform (Current)
 - [x] Smart contract for escrow & rentals
 - [x] REST API for resource discovery
+- [x] Integration tests (smart contract + API)
 - [ ] Basic frontend UI
 - [ ] Solana Mobile (Expo) dapp
-- [ ] Integration tests
 - [ ] Deploy to devnet
 
 ### Phase 2: Enhanced Features

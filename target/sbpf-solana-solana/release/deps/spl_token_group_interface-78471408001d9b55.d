@@ -1,0 +1,10 @@
+/root/.openclaw/workspace/rentby/target/sbpf-solana-solana/release/deps/spl_token_group_interface-78471408001d9b55.so: /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/lib.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/error.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/instruction.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/state.rs
+
+/root/.openclaw/workspace/rentby/target/sbpf-solana-solana/release/deps/libspl_token_group_interface-78471408001d9b55.rlib: /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/lib.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/error.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/instruction.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/state.rs
+
+/root/.openclaw/workspace/rentby/target/sbpf-solana-solana/release/deps/spl_token_group_interface-78471408001d9b55.d: /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/lib.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/error.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/instruction.rs /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/state.rs
+
+/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/error.rs:
+/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/instruction.rs:
+/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-token-group-interface-0.2.5/src/state.rs:

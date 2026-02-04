@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
-declare_id!("HmRuwkcYtKaCmx1uXycwCrjVcYBH5o9KGNd6ZF3S6Eq3");
+declare_id!("94DQFAXh6sNHQPPzYCCANhSPvznuQch8j18WuiijRb3L");
 
 #[program]
 pub mod rentby {

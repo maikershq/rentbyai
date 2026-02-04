@@ -1,0 +1,10 @@
+/root/.openclaw/workspace/rentby/target/debug/deps/borsh_schema_derive_internal-8b1ce2ca0f460e52.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/helpers.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/enum_schema.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/struct_schema.rs
+
+/root/.openclaw/workspace/rentby/target/debug/deps/libborsh_schema_derive_internal-8b1ce2ca0f460e52.rlib: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/helpers.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/enum_schema.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/struct_schema.rs
+
+/root/.openclaw/workspace/rentby/target/debug/deps/libborsh_schema_derive_internal-8b1ce2ca0f460e52.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/helpers.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/enum_schema.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/struct_schema.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/helpers.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/enum_schema.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-schema-derive-internal-0.9.3/src/struct_schema.rs:

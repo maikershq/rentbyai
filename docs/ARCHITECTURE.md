@@ -1,8 +1,8 @@
-# RentBy! - Architecture
+# RentBy - Architecture
 
 ## System Overview
 
-RentBy! is a decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals. The platform leverages Solana for fast settlement, transparent reputation, and autonomous agent-to-agent commerce.
+RentBy is a decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals. The platform leverages Solana for fast settlement, transparent reputation, and autonomous agent-to-agent commerce.
 
 ## High-Level Architecture
 

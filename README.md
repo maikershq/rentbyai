@@ -1,10 +1,10 @@
-# RentBy!
+# RentBy
 
 A decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals.
 
 ## Vision
 
-RentBy! enables autonomous agent-to-agent commerce on Solana. Agents can:
+RentBy enables autonomous agent-to-agent commerce on Solana. Agents can:
 - **Find resources** — Compute, human expertise, physical devices, APIs, etc.
 - **Negotiate terms** — Smart contract-based agreements with transparent pricing
 - **Settle automatically** — Escrow-based payments released on task completion

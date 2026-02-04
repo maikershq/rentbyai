@@ -283,7 +283,7 @@ app.post('/api/search', (req, res) => {
 
 // ============ Start Server ============
 app.listen(PORT, () => {
-  console.log(`RentBy! API running on port ${PORT}`);
+  console.log(`RentBy API running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`API docs: http://localhost:${PORT}/api`);
 });

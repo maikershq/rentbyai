@@ -1,6 +1,6 @@
-# RentBy! API
+# RentBy API
 
-RESTful API for the RentBy! agent resource marketplace.
+RESTful API for the RentBy agent resource marketplace.
 
 ## Base URL
 

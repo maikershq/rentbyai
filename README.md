@@ -155,6 +155,16 @@ npm start
 
 The API will be available at `http://localhost:3001`
 
+### Run the Frontend
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`
+
 ### Deploy Smart Contracts
 
 ```bash

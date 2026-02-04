@@ -58,10 +58,15 @@ pub mod rentby {
         resource.total_rentals += 1;
 
         // Release escrow to resource owner
+        let rental_key = rental.key();
+        let (_escrow_authority, escrow_bump) = Pubkey::find_program_address(
+            &[b"escrow", rental_key.as_ref()],
+            ctx.program_id,
+        );
         let seeds = &[
             b"escrow",
-            rental.key().as_ref(),
-            &[ctx.bumps.escrow],
+            rental_key.as_ref(),
+            &[escrow_bump],
         ];
         let signer_seeds = &[&seeds[..]];
 
@@ -110,10 +115,15 @@ pub mod rentby {
             ErrorCode::Unauthorized
         );
 
+        let rental_key = rental.key();
+        let (_escrow_authority, escrow_bump) = Pubkey::find_program_address(
+            &[b"escrow", rental_key.as_ref()],
+            ctx.program_id,
+        );
         let seeds = &[
             b"escrow",
-            rental.key().as_ref(),
-            &[ctx.bumps.escrow],
+            rental_key.as_ref(),
+            &[escrow_bump],
         ];
         let signer_seeds = &[&seeds[..]];
 

@@ -207,6 +207,39 @@ curl -X POST http://localhost:3001/api/search \
   }'
 ```
 
+## Deployment
+
+RentBy is ready to deploy! Use the automated deployment scripts:
+
+### Quick Deploy (One-Click Scripts)
+
+```bash
+# 1. Deploy smart contracts to Solana devnet
+./scripts/deploy-devnet.sh
+
+# 2. Deploy API to Railway
+./scripts/deploy-api.sh
+
+# 3. Deploy frontend to Vercel
+./scripts/deploy-frontend.sh
+```
+
+### Manual Deployment
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instructions including:
+- Smart contract deployment (devnet → mainnet)
+- API deployment to Railway
+- Frontend deployment to Vercel
+- Custom domain configuration
+- Environment variables setup
+- Monitoring and troubleshooting
+
+### Deployment Targets
+
+- **Frontend**: Vercel (https://rentby.ai)
+- **API**: Railway (https://api.rentby.ai)
+- **Smart Contracts**: Solana (devnet/mainnet)
+
 ## Development Status
 
 - ✅ Smart contract implementation (Rust + Anchor)
@@ -216,7 +249,7 @@ curl -X POST http://localhost:3001/api/search \
 - ✅ Architecture documentation
 - ✅ Smart contract integration tests (Anchor)
 - ✅ API unit tests (Jest + Supertest)
-- 🚧 Production deployment - Coming soon
+- ✅ Deployment scripts and documentation
 
 ## Roadmap
 
@@ -226,7 +259,7 @@ curl -X POST http://localhost:3001/api/search \
 - [x] Frontend UI (Next.js)
 - [x] Integration tests (smart contract + API)
 - [ ] Solana Mobile (Expo) dapp
-- [ ] Deploy to devnet
+- [ ] Deploy to devnet (ready - run `./scripts/deploy-devnet.sh`)
 
 ### Phase 2: Enhanced Features
 - [ ] Natural language embedding search

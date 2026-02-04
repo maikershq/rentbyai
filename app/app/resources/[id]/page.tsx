@@ -1,199 +1,197 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import Link from 'next/link'
-
-interface Resource {
-  id: string
-  owner: string
-  mint: string
-  resource_type: string
-  specs: string
-  hourly_rate: number
-  reputation: number
-  total_rentals: number
-  created_at: number
-}
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { Resource } from '../../../lib/types';
+import { getResource } from '../../../lib/api';
+import RentResourceForm from '../../../components/RentResourceForm';
 
 export default function ResourceDetailPage() {
-  const params = useParams()
-  const [resource, setResource] = useState<Resource | null>(null)
-  const [loading, setLoading] = useState(true)
+  const params = useParams();
+  const [resource, setResource] = useState<Resource | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (params.id) {
-      fetchResource(params.id as string)
+      fetchResource(params.id as string);
     }
-  }, [params.id])
+  }, [params.id]);
 
   const fetchResource = async (id: string) => {
     try {
-      const response = await fetch(`/api/resources/${id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setResource(data)
-      } else {
-        console.error('Resource not found')
-      }
-    } catch (error) {
-      console.error('Error fetching resource:', error)
+      setLoading(true);
+      const data = await getResource(id);
+      setResource(data);
+    } catch (err) {
+      setError('Failed to load resource');
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleRent = async () => {
-    alert('Rent functionality coming soon! Connect your wallet to proceed.')
-  }
+  const getTypeColor = (type: string) => {
+    const colors: Record<string, string> = {
+      compute: 'bg-blue-500',
+      human: 'bg-green-500',
+      device: 'bg-purple-500',
+      api: 'bg-orange-500',
+      default: 'bg-gray-500',
+    };
+    return colors[type] || colors.default;
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
       </div>
-    )
+    );
   }
 
-  if (!resource) {
+  if (error || !resource) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Resource Not Found</h1>
-          <Link href="/resources" className="text-primary-600 hover:text-primary-700">
-            Browse other resources
-          </Link>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-white text-xl">{error || 'Resource not found'}</div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">R</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      {/* Navigation */}
+      <nav className="border-b border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-white">
+                RentBy
+              </Link>
             </div>
-            <span className="text-2xl font-bold gradient-text">RentBy</span>
-          </Link>
+            <div className="flex space-x-4">
+              <Link
+                href="/resources"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Resources
+              </Link>
+              <Link
+                href="/rentals"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Rentals
+              </Link>
+              <Link
+                href="/stats"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Stats
+              </Link>
+              <Link
+                href="/search"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Search
+              </Link>
+              <Link
+                href="/create-resource"
+                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                List Resource
+              </Link>
+            </div>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <Link
-            href="/resources"
-            className="text-primary-600 hover:text-primary-700 flex items-center space-x-2"
-          >
-            <span>←</span>
-            <span>Back to Resources</span>
-          </Link>
-        </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Link
+          href="/resources"
+          className="text-white/60 hover:text-white mb-6 inline-block"
+        >
+          ← Back to Resources
+        </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
+          {/* Resource Details */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div className="p-8">
-                <div className="flex justify-between items-start mb-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/10">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <span
+                    className={`${getTypeColor(
+                      resource.resource_type,
+                    )} text-white text-sm px-3 py-1 rounded-full mb-4 inline-block`}
+                  >
+                    {resource.resource_type.toUpperCase()}
+                  </span>
+                  <h1 className="text-4xl font-bold text-white mb-4">
+                    {resource.specs}
+                  </h1>
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg">
+                  <span className="text-yellow-400 text-2xl">⭐</span>
                   <div>
-                    <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mb-2">
-                      {resource.resource_type.charAt(0).toUpperCase() + resource.resource_type.slice(1)}
-                    </span>
-                    <h1 className="text-3xl font-bold text-gray-900">{resource.specs}</h1>
+                    <div className="text-white text-2xl font-bold">
+                      {resource.reputation.toFixed(1)}
+                    </div>
+                    <div className="text-white/60 text-xs">
+                      {resource.total_rentals} rental{resource.total_rentals !== 1 ? 's' : ''}
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-white/5 rounded-lg p-4">
+                  <p className="text-white/60 text-sm mb-2">Hourly Rate</p>
+                  <p className="text-3xl font-bold text-white">
+                    {resource.hourly_rate} SOL
+                  </p>
+                </div>
+                <div className="bg-white/5 rounded-lg p-4">
+                  <p className="text-white/60 text-sm mb-2">Owner</p>
+                  <p className="text-white font-mono text-sm">
+                    {resource.owner.slice(0, 8)}...{resource.owner.slice(-8)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-6 mb-8">
+                <h2 className="text-xl font-semibold text-white mb-4">Resource Details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-3">Description</h2>
-                    <p className="text-gray-600">
-                      This {resource.resource_type} resource is available for rental.
-                      It has completed {resource.total_rentals} rentals and has a reputation score of {resource.reputation}/10.
+                    <p className="text-white/60 mb-1">Resource ID</p>
+                    <p className="text-white font-mono text-xs">{resource.id}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">NFT Mint</p>
+                    <p className="text-white font-mono text-xs">{resource.mint}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Listed On</p>
+                    <p className="text-white">
+                      {new Date(resource.created_at).toLocaleDateString()}
                     </p>
                   </div>
-
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-3">Specifications</h2>
-                    <ul className="space-y-2 text-gray-600">
-                      <li className="flex items-center space-x-2">
-                        <span className="w-2 h-2 bg-primary-600 rounded-full"></span>
-                        <span>Type: {resource.resource_type}</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <span className="w-2 h-2 bg-primary-600 rounded-full"></span>
-                        <span>Hourly Rate: ${resource.hourly_rate}</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <span className="w-2 h-2 bg-primary-600 rounded-full"></span>
-                        <span>Total Rentals: {resource.total_rentals}</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-3">Reputation</h2>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex text-yellow-400 text-2xl">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i}>{i < Math.round(resource.reputation / 2) ? '★' : '☆'}</span>
-                        ))}
-                      </div>
-                      <span className="text-2xl font-bold text-gray-900">{resource.reputation}/10</span>
-                    </div>
-                    <p className="text-gray-500 mt-2">Based on {resource.total_rentals} completed rentals</p>
+                    <p className="text-white/60 mb-1">Total Rentals</p>
+                    <p className="text-white">{resource.total_rentals}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Rent Form Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">
-              <div className="text-center mb-6">
-                <div className="text-4xl font-bold text-primary-600 mb-2">
-                  ${resource.hourly_rate}
-                </div>
-                <div className="text-gray-500">per hour</div>
-              </div>
-
-              <button
-                onClick={handleRent}
-                className="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-colors font-medium mb-4"
-              >
-                Rent Now
-              </button>
-
-              <div className="border-t pt-6 space-y-4">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Owner</div>
-                  <div className="font-mono text-sm bg-gray-100 p-2 rounded">
-                    {resource.owner.slice(0, 20)}...{resource.owner.slice(-8)}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Mint Address</div>
-                  <div className="font-mono text-sm bg-gray-100 p-2 rounded">
-                    {resource.mint.slice(0, 20)}...{resource.mint.slice(-8)}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Listed Since</div>
-                  <div className="text-gray-900">
-                    {new Date(resource.created_at).toLocaleDateString()}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <RentResourceForm resourceId={resource.id} resource={resource} />
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

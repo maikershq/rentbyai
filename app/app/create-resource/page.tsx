@@ -69,6 +69,18 @@ export default function CreateResourcePage() {
                 Rentals
               </Link>
               <Link
+                href="/stats"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Stats
+              </Link>
+              <Link
+                href="/search"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Search
+              </Link>
+              <Link
                 href="/create-resource"
                 className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >

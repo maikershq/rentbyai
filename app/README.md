@@ -1,15 +1,41 @@
 # RentBy Frontend
 
-Modern Next.js application for the RentBy marketplace.
+A modern, responsive web interface for the RentBy decentralized resource marketplace.
+
+## Features
+
+### Pages
+- **Home** (`/`) - Hero section with marketplace overview
+- **Resources** (`/resources`) - Browse resources with filters
+- **Resource Detail** (`/resources/[id]`) - View resource details and rent
+- **Rentals** (`/rentals`) - View rental history
+- **Create Resource** (`/create-resource`) - List new resources
+- **Stats** (`/stats`) - Marketplace statistics dashboard
+- **Search** (`/search`) - Natural language resource discovery
+
+### Key Features
+- 🎨 Beautiful gradient UI with Tailwind CSS
+- 📱 Fully responsive design (mobile-first)
+- 🔍 Natural language search
+- 📊 Real-time statistics
+- 💰 In-app rental creation
+- ⭐ Reputation display
+- 🔍 Advanced filtering (type, price, reputation)
 
 ## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **Blockchain:** Solana Web3.js
+- **State:** React Hooks
+- **API:** Fetch API with type-safe wrappers
 
 ## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- RentBy API running on `http://localhost:3001`
 
 ### Installation
 
@@ -24,170 +50,147 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Visit `http://localhost:3000`
 
-### Build for Production
+### Production Build
 
 ```bash
 npm run build
 npm start
 ```
 
-## Pages
-
-### Home Page (`/`)
-- Hero section with search
-- Marketplace statistics
-- Featured resources
-- Call-to-action sections
-
-### Resources (`/resources`)
-- Browse all resources
-- Filter by type, price, reputation
-- Sort options
-
-### Resource Detail (`/resources/[id]`)
-- Detailed resource information
-- Owner and mint details
-- Reputation display
-- Rent button (coming soon)
-
-### Create Resource (`/create`)
-- Form to list new resources
-- Input validation
-- API integration
-
-### Rentals (`/rentals`)
-- List all rental agreements
-- Status tracking
-- Duration and amount display
-
-## Components
-
-### ResourceCard
-- Displays resource information
-- Type badges with icons
-- Reputation stars
-- Owner address display
-
-### SearchBar
-- Natural language search
-- Integration with search API
-
-## Features
-
-- ✅ Responsive design (mobile-first)
-- ✅ Dark mode support
-- ✅ TypeScript for type safety
-- ✅ Tailwind CSS for styling
-- ✅ API proxy configuration
-- ✅ SEO-friendly with Next.js metadata
-- ✅ Client-side data fetching
-
-## API Proxy
-
-The frontend uses Next.js rewrites to proxy API requests to the backend:
-
-```javascript
-// next.config.js
-async rewrites() {
-  return [
-    {
-      source: '/api/:path*',
-      destination: 'http://localhost:3001/api/:path*',
-    },
-  ]
-}
-```
-
-This allows the frontend to fetch from `/api/resources` instead of `http://localhost:3001/api/resources`.
-
 ## Environment Variables
 
-Create a `.env.local` file for environment-specific configuration:
+Create a `.env.local` file:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
-NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ```
+
+## Project Structure
+
+```
+app/
+├── app/                    # Next.js App Router pages
+│   ├── page.tsx           # Home page
+│   ├── layout.tsx         # Root layout
+│   ├── globals.css        # Global styles
+│   ├── resources/        # Resources pages
+│   │   ├── page.tsx      # Resources listing
+│   │   └── [id]/         # Resource detail
+│   │       └── page.tsx
+│   ├── rentals/          # Rentals page
+│   │   └── page.tsx
+│   ├── create-resource/  # Create resource page
+│   │   └── page.tsx
+│   ├── stats/            # Statistics page
+│   │   └── page.tsx
+│   └── search/           # Search page
+│       └── page.tsx
+├── components/           # Reusable components
+│   └── RentResourceForm.tsx
+├── lib/                  # Utilities
+│   ├── types.ts         # TypeScript types
+│   └── api.ts           # API client
+└── public/              # Static assets
+```
+
+## API Integration
+
+The frontend communicates with the RentBy REST API. All API calls are wrapped in `lib/api.ts` with full TypeScript support.
+
+### Example Usage
+
+```typescript
+import { getResources, createRental } from '../lib/api';
+
+// Fetch resources
+const { resources } = await getResources({ type: 'compute', max_price: 10 });
+
+// Create a rental
+const result = await createRental({
+  renter: 'wallet_address',
+  resource_owner: 'owner_address',
+  resource_mint: 'mint_address',
+  escrow_amount: 50,
+  duration: 3600,
+  solana_tx_signature: 'signature',
+});
+```
+
+## Component Architecture
+
+All pages follow a consistent structure:
+1. Navigation bar (shared across all pages)
+2. Main content area
+3. Responsive grid layouts
+4. Loading and error states
 
 ## Styling
 
-### Tailwind Configuration
+### Color Scheme
+- **Primary:** Purple to Blue gradient
+- **Background:** Dark gradient (purple → blue → indigo)
+- **Text:** White with opacity for hierarchy
+- **Accents:** Yellow (stars/reputation), Status colors
 
-Custom colors are defined in `tailwind.config.js`:
+### Utility Classes
+- `bg-white/10` - Semi-transparent white backgrounds
+- `backdrop-blur-sm` - Glass effect
+- `hover:scale-105` - Micro-interactions
+- `transition-all` - Smooth transitions
 
-```javascript
-colors: {
-  primary: {
-    50: '#f0f9ff',
-    // ... more shades
-  },
-}
-```
+## Responsive Design
 
-### Custom Classes
-
-- `.gradient-text`: Gradient text effect for branding
-- `.text-balance`: Balanced text wrapping
+The app uses a mobile-first approach:
+- **Mobile:** Single column, stacked layout
+- **Tablet:** 2-column grids
+- **Desktop:** 3-column grids, full-width navigation
 
 ## Future Enhancements
 
-- [ ] Wallet connection (Solana)
-- [ ] Create rental flow
-- [ ] Profile page
-- [ ] Resource owner dashboard
-- [ ] Search history
-- [ ] Favorites/bookmarks
-- [ ] Review system
-- [ ] Notifications
-- [ ] Mobile app (Expo)
+- [ ] Wallet connection (Phantom, Solflare)
+- [ ] Real-time WebSocket updates
+- [ ] User profile pages
+- [ ] Transaction history
+- [ ] Dispute resolution UI
+- [ ] Multi-language support
+- [ ] Dark/Light mode toggle
+- [ ] PWA support
+
+## Contributing
+
+When adding new pages or features:
+
+1. Follow the existing folder structure
+2. Use TypeScript for type safety
+3. Include proper error handling
+4. Add loading states
+5. Ensure mobile responsiveness
+6. Document new API calls in `lib/api.ts`
 
 ## Deployment
 
 ### Vercel (Recommended)
-
 ```bash
-npm run build
+npm install -g vercel
+vercel
 ```
 
-Deploy to Vercel with automatic CI/CD.
-
-### Other Platforms
-
-Build and start the production server:
-
-```bash
-npm run build
-npm start
+### Docker
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+CMD ["npm", "start"]
 ```
 
-## Troubleshooting
+## Support
 
-### Port already in use
-
-Kill the process on port 3000:
-
-```bash
-lsof -ti:3000 | xargs kill -9
-```
-
-### API requests failing
-
-Ensure the API server is running on port 3001:
-
-```bash
-cd ../api
-npm start
-```
-
-## Contributing
-
-1. Create a new branch
-2. Make your changes
-3. Test locally
-4. Submit a pull request
-
-## License
-
-MIT
+For issues or questions:
+- Check the main [README.md](../README.md)
+- Review [API Documentation](../api/API.md)
+- Visit the project on GitHub

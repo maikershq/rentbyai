@@ -1,174 +1,174 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-
-interface Rental {
-  id: string
-  renter: string
-  resource_owner: string
-  resource_mint: string
-  escrow_amount: number
-  start_time: number
-  duration: number
-  status: string
-  solana_tx_signature: string
-  created_at: number
-}
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Rental } from '../lib/types';
+import { getRentals } from '../lib/api';
 
 export default function RentalsPage() {
-  const [rentals, setRentals] = useState<Rental[]>([])
-  const [loading, setLoading] = useState(true)
+  const [rentals, setRentals] = useState<Rental[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRentals()
-  }, [])
+    fetchRentals();
+  }, []);
 
   const fetchRentals = async () => {
     try {
-      const response = await fetch('/api/rentals')
-      const data = await response.json()
-      setRentals(data.rentals || [])
+      setLoading(true);
+      const data = await getRentals();
+      setRentals(data.rentals);
     } catch (error) {
-      console.error('Error fetching rentals:', error)
+      console.error('Error fetching rentals:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800'
-      case 'completed':
-        return 'bg-blue-100 text-blue-800'
-      case 'disputed':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'resolved':
-        return 'bg-purple-100 text-purple-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
+    const colors: Record<string, string> = {
+      active: 'bg-green-500',
+      completed: 'bg-blue-500',
+      disputed: 'bg-red-500',
+      resolved: 'bg-yellow-500',
+    };
+    return colors[status] || 'bg-gray-500';
+  };
+
+  const formatTimestamp = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString();
+  };
 
   const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     if (hours > 0) {
-      return `${hours}h ${minutes}m`
+      return `${hours}h ${minutes}m`;
     }
-    return `${minutes}m`
-  }
+    return `${minutes}m`;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">R</span>
-              </div>
-              <span className="text-2xl font-bold gradient-text">RentBy</span>
-            </Link>
-            <nav className="flex space-x-6">
-              <Link href="/" className="text-gray-700 hover:text-primary-600 transition-colors">
-                Home
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      {/* Navigation */}
+      <nav className="border-b border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-white">
+                RentBy
               </Link>
-              <Link href="/resources" className="text-gray-700 hover:text-primary-600 transition-colors">
+            </div>
+            <div className="flex space-x-4">
+              <Link
+                href="/resources"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
                 Resources
               </Link>
-              <Link href="/create" className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+              <Link
+                href="/rentals"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Rentals
+              </Link>
+              <Link
+                href="/stats"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Stats
+              </Link>
+              <Link
+                href="/search"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Search
+              </Link>
+              <Link
+                href="/create-resource"
+                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
                 List Resource
               </Link>
-            </nav>
+            </div>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Rental Agreements</h1>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-4xl font-bold text-white mb-8">Rentals</h1>
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          </div>
+          <div className="text-center text-white/80">Loading rentals...</div>
         ) : rentals.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📋</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No Rentals Yet</h2>
-            <p className="text-gray-600 mb-6">
-              Rental agreements will appear here once they are created.
-            </p>
+          <div className="text-center text-white/80">
+            <p className="text-xl mb-4">No rentals yet</p>
             <Link
               href="/resources"
-              className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
+              className="text-white hover:underline"
             >
-              Browse Resources
+              Browse resources to get started
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Renter
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Resource Owner
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Started
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {rentals.map((rental) => (
-                  <tr key={rental.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                      {rental.id.slice(0, 8)}...
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
-                      {rental.renter.slice(0, 8)}...{rental.renter.slice(-4)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
-                      {rental.resource_owner.slice(0, 8)}...{rental.resource_owner.slice(-4)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      ${rental.escrow_amount.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+          <div className="space-y-4">
+            {rentals.map((rental) => (
+              <div
+                key={rental.id}
+                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`${getStatusColor(
+                        rental.status,
+                      )} text-white text-xs px-3 py-1 rounded-full`}
+                    >
+                      {rental.status.toUpperCase()}
+                    </span>
+                    <span className="text-white/60 text-sm">
+                      {formatTimestamp(rental.created_at)}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white/60 text-sm">Escrow Amount</p>
+                    <p className="text-2xl font-bold text-white">
+                      {rental.escrow_amount} SOL
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <p className="text-white/60 text-sm">Renter</p>
+                    <p className="text-white font-mono text-sm">
+                      {rental.renter.slice(0, 8)}...{rental.renter.slice(-8)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-sm">Resource Owner</p>
+                    <p className="text-white font-mono text-sm">
+                      {rental.resource_owner.slice(0, 8)}...{rental.resource_owner.slice(-8)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-sm">Duration</p>
+                    <p className="text-white font-semibold">
                       {formatDuration(rental.duration)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(rental.status)}`}>
-                        {rental.status.charAt(0).toUpperCase() + rental.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(rental.start_time).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </p>
+                  </div>
+                </div>
+                <div className="text-white/60 text-sm">
+                  <p className="mb-1">Resource Mint:</p>
+                  <p className="font-mono text-xs">
+                    {rental.resource_mint}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

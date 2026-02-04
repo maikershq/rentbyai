@@ -1,0 +1,12 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api_url",
+    "NEXT_PUBLIC_SOLANA_RPC_URL": "@solana_rpc_url",
+    "NEXT_PUBLIC_PROGRAM_ID": "@program_id"
+  }
+}

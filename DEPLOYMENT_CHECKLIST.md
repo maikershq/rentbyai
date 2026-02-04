@@ -7,10 +7,11 @@ Quick reference checklist for deploying RentBy to production.
 - [x] Smart contracts built and tested
 - [x] API built and tested
 - [x] Frontend built and tested
-- [ ] **BLOCKER:** Add SSH public key to GitHub
-  - Key: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtZcpi4a1prqjfED0+mZvN9+IQNMHlIdDdxgZRJrlAf`
-  - Add at: https://github.com/settings/keys
-- [ ] Push code to GitHub (`git push`)
+- [x] SSH public key added to GitHub
+- [x] Code pushed to GitHub (all 29 commits)
+- [x] Deployment configs created (Railway, Heroku, Vercel)
+- [x] Environment variable templates created
+- [x] Comprehensive deployment guide written
 
 ## Smart Contract Deployment
 
@@ -98,8 +99,30 @@ Quick reference checklist for deploying RentBy to production.
 
 ---
 
-**Current Status:** Waiting for SSH key setup to push to GitHub
+**Current Status:** ✅ Code pushed to GitHub. Ready for deployment!
 
-**Next Immediate Step:** User needs to add SSH public key to GitHub, then run `git push`
+**Next Immediate Steps:**
+1. Deploy smart contract to Solana devnet (see `docs/DEPLOYMENT.md`)
+2. Deploy API to Railway (zero-config, auto-deploy from GitHub)
+3. Deploy frontend to Vercel (auto-detects Next.js)
 
-See `docs/DEPLOYMENT.md` for detailed instructions.
+**Quick Start:**
+```bash
+# Deploy smart contract
+cd /root/.openclaw/workspace/rentby
+anchor build && anchor deploy
+
+# Set up Railway (API)
+1. Visit https://railway.app
+2. New Project → Deploy from GitHub → Select 'rentby'
+3. Set root directory: 'api'
+4. Add environment variables (see api/.env.example)
+
+# Set up Vercel (Frontend)
+1. Visit https://vercel.com
+2. New Project → Import 'rentby' repository
+3. Set root directory: 'frontend'
+4. Add environment variables (see frontend/.env.example)
+```
+
+See `docs/DEPLOYMENT.md` for detailed step-by-step instructions.

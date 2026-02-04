@@ -1,24 +1,66 @@
 # RentBy Deployment Guide
 
-Complete guide for deploying RentBy to production.
+Complete guide to deploying RentBy to production.
 
-## Overview
+## Table of Contents
+1. [Prerequisites](#prerequisites)
+2. [Smart Contract Deployment](#smart-contract-deployment)
+3. [API Deployment (Railway)](#api-deployment-railway)
+4. [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
+5. [Domain Configuration](#domain-configuration)
+6. [Post-Deployment Testing](#post-deployment-testing)
+7. [Troubleshooting](#troubleshooting)
 
-- **Frontend**: Vercel (Next.js)
-- **API**: Railway (Node.js/Express)
-- **Smart Contracts**: Solana (devnet → mainnet)
-- **Domain**: rentby.ai
+---
 
 ## Prerequisites
 
-- GitHub account (✅ configured with SSH)
-- Railway account (free tier available)
-- Vercel account (free tier available)
-- Solana CLI installed
-- Anchor CLI installed
-- Domain rentby.ai configured
+### Required Accounts
+- [x] GitHub account (code already pushed)
+- [ ] Solana wallet (Phantom/Solflare)
+- [ ] Railway account (for API) - https://railway.app
+- [ ] Vercel account (for frontend) - https://vercel.com
+- [ ] Domain registrar access (for rentby.ai)
 
-## 1. Deploy Smart Contracts to Devnet
+### Required Software
+```bash
+# Solana CLI
+sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
+
+# Anchor CLI
+cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+avm install latest
+avm use latest
+
+# Verify installations
+solana --version
+anchor --version
+```
+
+---
+
+## Smart Contract Deployment
+
+### 1. Set Up Solana Wallet
+
+```bash
+# Create a new wallet (or import existing)
+solana-keygen new --outfile ~/.config/solana/devnet.json
+
+# Set to devnet
+solana config set --url https://api.devnet.solana.com
+
+# Set wallet
+solana config set --keypair ~/.config/solana/devnet.json
+
+# Airdrop SOL for testing (devnet only)
+solana airdrop 2
+
+# Check balance
+solana balance
+```
+
+### 2. Build and Deploy Smart Contract
 
 ```bash
 cd /root/.openclaw/workspace/rentby
@@ -26,260 +68,434 @@ cd /root/.openclaw/workspace/rentby
 # Build the program
 anchor build
 
+# Get the Program ID
+solana address -k target/deploy/rentby-keypair.json
+
+# Update Program ID in Anchor.toml and lib.rs
+# Replace 'your_program_id_here' with the actual ID
+
 # Deploy to devnet
-anchor deploy --provider.cluster devnet
+anchor deploy
 
-# Save the program ID (shown after deployment)
-# Update it in Anchor.toml and .env files
+# Verify deployment
+solana program show <PROGRAM_ID>
 ```
 
-**Important**: Copy the program ID from deployment output!
+### 3. Update Configuration
 
-## 2. Deploy API to Railway
+After deployment, update the Program ID in:
+- `Anchor.toml`
+- `programs/rentby/src/lib.rs`
+- `api/.env` → `PROGRAM_ID`
+- `frontend/.env.local` → `NEXT_PUBLIC_PROGRAM_ID`
 
-### Option A: Via Railway CLI
+### 4. Mainnet Deployment (When Ready)
 
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Switch to mainnet
+solana config set --url https://api.mainnet-beta.solana.com
 
-# Login
-railway login
-
-# Initialize project
-cd api
-railway init
-
-# Add environment variables
-railway variables set PORT=3001
-railway variables set NODE_ENV=production
-railway variables set SOLANA_RPC_URL=https://api.devnet.solana.com
-railway variables set SOLANA_NETWORK=devnet
-railway variables set RENTBY_PROGRAM_ID=<your_program_id>
-railway variables set CORS_ORIGIN=https://rentby.ai,https://www.rentby.ai
-
-# Deploy
-railway up
-```
-
-### Option B: Via Railway Dashboard
-
-1. Go to https://railway.app
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select `maikershq/rentbyai` repository
-4. Set root directory: `api`
-5. Add environment variables (see `.env.example`)
-6. Deploy!
-
-### Get API URL
-
-After deployment, Railway will provide a URL like:
-`https://rentby-api-production.up.railway.app`
-
-Update frontend config with this URL.
-
-## 3. Deploy Frontend to Vercel
-
-### Option A: Via Vercel CLI
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Login
-vercel login
-
-# Deploy from root directory
-cd /root/.openclaw/workspace/rentby
-vercel
-
-# Follow prompts:
-# - Link to existing project? No
-# - Project name: rentby
-# - Directory: frontend
-# - Build command: npm run build
-# - Output directory: .next
-
-# Set environment variables
-vercel env add NEXT_PUBLIC_API_URL production
-# Enter: https://rentby-api-production.up.railway.app
-
-vercel env add NEXT_PUBLIC_SOLANA_NETWORK production
-# Enter: devnet
-
-vercel env add NEXT_PUBLIC_SOLANA_RPC_URL production
-# Enter: https://api.devnet.solana.com
-
-vercel env add NEXT_PUBLIC_RENTBY_PROGRAM_ID production
-# Enter: <your_program_id>
-
-# Deploy to production
-vercel --prod
-```
-
-### Option B: Via Vercel Dashboard
-
-1. Go to https://vercel.com
-2. Click "Add New" → "Project"
-3. Import `maikershq/rentbyai` from GitHub
-4. Configure:
-   - Framework Preset: Next.js
-   - Root Directory: `frontend`
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-5. Add environment variables (see `frontend/.env.example`)
-6. Deploy!
-
-## 4. Configure Custom Domain
-
-### Railway (API)
-
-1. In Railway dashboard → Settings → Domains
-2. Add custom domain: `api.rentby.ai`
-3. Add DNS records at your domain provider:
-   ```
-   CNAME api -> <railway-subdomain>.up.railway.app
-   ```
-
-### Vercel (Frontend)
-
-1. In Vercel dashboard → Settings → Domains
-2. Add domains:
-   - `rentby.ai`
-   - `www.rentby.ai`
-3. Add DNS records at your domain provider:
-   ```
-   A     @   -> 76.76.21.21
-   CNAME www -> cname.vercel-dns.com
-   ```
-
-## 5. Update Environment Variables
-
-After getting production URLs, update:
-
-### Frontend `.env.production`
-```env
-NEXT_PUBLIC_API_URL=https://api.rentby.ai
-NEXT_PUBLIC_SOLANA_NETWORK=devnet
-NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
-NEXT_PUBLIC_RENTBY_PROGRAM_ID=<your_program_id>
-```
-
-### API Environment Variables
-```env
-PORT=3001
-NODE_ENV=production
-SOLANA_RPC_URL=https://api.devnet.solana.com
-SOLANA_NETWORK=devnet
-RENTBY_PROGRAM_ID=<your_program_id>
-CORS_ORIGIN=https://rentby.ai,https://www.rentby.ai
-```
-
-## 6. Deploy to Mainnet (Production)
-
-⚠️ **Only after thorough testing on devnet!**
-
-```bash
-# Build with mainnet config
-anchor build
+# Fund wallet with real SOL (deployment costs ~2-5 SOL)
+# Send SOL to your wallet address
 
 # Deploy to mainnet
-anchor deploy --provider.cluster mainnet-beta
+anchor deploy --provider.cluster mainnet
 
-# Update all environment variables:
-# - SOLANA_NETWORK=mainnet-beta
-# - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
-# - RENTBY_PROGRAM_ID=<new_mainnet_program_id>
-
-# Redeploy API and Frontend with new config
+# ⚠️ Make sure to test thoroughly on devnet first!
 ```
 
-## 7. Post-Deployment Checklist
+---
 
-- [ ] Smart contract deployed to devnet
-- [ ] API deployed to Railway
-- [ ] Frontend deployed to Vercel
-- [ ] Custom domains configured (api.rentby.ai, rentby.ai)
-- [ ] DNS records added and propagated
-- [ ] Environment variables set correctly
-- [ ] CORS configured properly
-- [ ] SSL/HTTPS working on all domains
-- [ ] Test wallet connection (Phantom/Solflare)
-- [ ] Test resource creation
-- [ ] Test rental flow
-- [ ] Test dispute resolution
-- [ ] Monitor for errors (Railway logs, Vercel logs)
+## API Deployment (Railway)
 
-## 8. Monitoring & Maintenance
+### Option 1: Railway (Recommended)
 
-### Railway (API)
-- View logs: Railway dashboard → Deployments → Logs
-- Monitor usage: Railway dashboard → Metrics
-- Set up alerts for errors
+Railway provides automatic deployments from GitHub with zero configuration.
 
-### Vercel (Frontend)
-- View logs: Vercel dashboard → Deployments → Function Logs
-- Monitor analytics: Vercel dashboard → Analytics
-- Check build logs for errors
+#### Step 1: Create Railway Project
 
-### Solana Program
-- Monitor transactions on Solana Explorer
-- Check program account usage
-- Monitor rent costs
+1. Go to https://railway.app and sign in
+2. Click "New Project"
+3. Select "Deploy from GitHub repo"
+4. Choose `rentby` repository
+5. Railway will auto-detect Node.js
 
-## 9. Troubleshooting
+#### Step 2: Configure Root Directory
 
-### Common Issues
+1. In Railway project settings → "Service"
+2. Set **Root Directory**: `api`
+3. Railway will use `api/package.json` for build
 
-**CORS Errors**
-- Check API `CORS_ORIGIN` includes your frontend domain
-- Ensure protocol (https://) matches
+#### Step 3: Add Environment Variables
 
-**Wallet Connection Failed**
-- Verify `NEXT_PUBLIC_SOLANA_NETWORK` matches program deployment
-- Check RPC URL is accessible
-- Ensure program ID is correct
+In Railway dashboard → Variables:
 
-**API Not Responding**
-- Check Railway logs for errors
-- Verify environment variables are set
+```bash
+PORT=3000
+NODE_ENV=production
+SOLANA_RPC_URL=https://api.devnet.solana.com
+PROGRAM_ID=<your_deployed_program_id>
+FRONTEND_URL=https://rentby.ai
+```
+
+#### Step 4: Deploy
+
+1. Railway automatically deploys on push to main
+2. Get your API URL: `https://rentby-api-production.up.railway.app`
+3. Note this URL for frontend configuration
+
+#### Step 5: Custom Domain (Optional)
+
+1. Go to Settings → Domains
+2. Add custom domain: `api.rentby.ai`
+3. Configure DNS as instructed
+
+### Option 2: Heroku
+
+```bash
+# Install Heroku CLI
+curl https://cli-assets.heroku.com/install.sh | sh
+
+# Login
+heroku login
+
+# Create app
+heroku create rentby-api
+
+# Add Node.js buildpack
+heroku buildpacks:set heroku/nodejs
+
+# Set root directory
+heroku config:set PROJECT_PATH=api
+
+# Set environment variables
+heroku config:set NODE_ENV=production
+heroku config:set PORT=3000
+heroku config:set SOLANA_RPC_URL=https://api.devnet.solana.com
+heroku config:set PROGRAM_ID=<your_program_id>
+heroku config:set FRONTEND_URL=https://rentby.ai
+
+# Deploy
+git push heroku main
+
+# View logs
+heroku logs --tail
+```
+
+---
+
+## Frontend Deployment (Vercel)
+
+### Step 1: Connect Repository
+
+1. Go to https://vercel.com and sign in
+2. Click "Add New Project"
+3. Import `rentby` repository from GitHub
+4. Vercel auto-detects Next.js
+
+### Step 2: Configure Build Settings
+
+1. **Root Directory**: `frontend`
+2. **Build Command**: `npm run build` (auto-detected)
+3. **Output Directory**: `.next` (auto-detected)
+4. **Install Command**: `npm install` (auto-detected)
+
+### Step 3: Add Environment Variables
+
+In Vercel project → Settings → Environment Variables:
+
+```bash
+NEXT_PUBLIC_API_URL=https://rentby-api-production.up.railway.app
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_SOLANA_NETWORK=devnet
+NEXT_PUBLIC_PROGRAM_ID=<your_deployed_program_id>
+```
+
+> **Note:** Update `NEXT_PUBLIC_API_URL` with your actual Railway API URL
+
+### Step 4: Deploy
+
+1. Click "Deploy"
+2. Vercel builds and deploys automatically
+3. Get preview URL: `https://rentby-username.vercel.app`
+
+### Step 5: Custom Domain
+
+1. Go to Settings → Domains
+2. Add domain: `rentby.ai`
+3. Configure DNS records:
+
+```dns
+Type: A
+Name: @
+Value: 76.76.21.21
+
+Type: CNAME
+Name: www
+Value: cname.vercel-dns.com
+```
+
+4. Wait for DNS propagation (~5-60 minutes)
+5. Vercel automatically provisions SSL certificate
+
+---
+
+## Domain Configuration
+
+### DNS Records for rentby.ai
+
+Configure these records in your domain registrar:
+
+```dns
+# Frontend (Vercel)
+A     @       76.76.21.21
+CNAME www     cname.vercel-dns.com
+
+# API (Railway or custom)
+CNAME api     <railway-domain>.up.railway.app
+# OR
+A     api     <railway-ip-address>
+```
+
+### SSL Certificates
+
+Both Vercel and Railway provide automatic SSL certificates:
+- Vercel: Automatic via Let's Encrypt
+- Railway: Automatic for custom domains
+
+---
+
+## Post-Deployment Testing
+
+### 1. Test API Endpoints
+
+```bash
+# Health check
+curl https://api.rentby.ai/health
+
+# Get resources
+curl https://api.rentby.ai/api/resources
+
+# Get stats
+curl https://api.rentby.ai/api/stats
+```
+
+### 2. Test Frontend
+
+1. Visit https://rentby.ai
+2. Browse resources page
+3. Click on a resource to view details
+4. Try creating a resource (requires wallet)
+
+### 3. Test Wallet Connection
+
+1. Install Phantom or Solflare wallet extension
+2. Connect wallet on frontend
+3. Switch to devnet in wallet settings
+4. Create a test resource
+5. Verify transaction on Solana Explorer
+
+### 4. Test Smart Contract
+
+```bash
+# View program account
+solana program show <PROGRAM_ID>
+
+# Check program logs
+solana logs <PROGRAM_ID>
+```
+
+---
+
+## Monitoring & Maintenance
+
+### Error Tracking
+
+Set up error monitoring (optional but recommended):
+
+```bash
+# For API (Railway)
+# Add to environment variables
+SENTRY_DSN=<your_sentry_dsn>
+
+# For Frontend (Vercel)
+# Add to Vercel environment variables
+NEXT_PUBLIC_SENTRY_DSN=<your_sentry_dsn>
+```
+
+### Logging
+
+```bash
+# Railway logs
+# View in Railway dashboard or CLI:
+railway logs
+
+# Heroku logs
+heroku logs --tail
+
+# Vercel logs
+# View in Vercel dashboard → Deployments → Logs
+```
+
+### Performance Monitoring
+
+- Railway: Built-in metrics dashboard
+- Vercel: Analytics available in dashboard
+- Solana: Monitor RPC usage and transaction fees
+
+---
+
+## Troubleshooting
+
+### Smart Contract Issues
+
+**Problem:** Program deployment fails
+```bash
+# Check balance
+solana balance
+
+# Airdrop more SOL (devnet)
+solana airdrop 2
+
+# Check program size
+ls -lh target/deploy/*.so
+```
+
+**Problem:** Program ID mismatch
+```bash
+# Regenerate Program ID
+solana-keygen new -o target/deploy/rentby-keypair.json --force
+
+# Update in Anchor.toml and lib.rs
+# Rebuild and redeploy
+anchor build && anchor deploy
+```
+
+### API Issues
+
+**Problem:** API not starting on Railway
+- Check environment variables are set
+- Verify `PORT` is set to Railway's provided port
+- Check logs for errors
+
+**Problem:** CORS errors
+- Verify `FRONTEND_URL` matches your Vercel domain
+- Check CORS configuration in `api/src/index.js`
+
+**Problem:** Solana RPC connection fails
+- Test RPC URL: `curl https://api.devnet.solana.com -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"getHealth"}'`
+- Try alternative RPC: https://rpc.ankr.com/solana_devnet
+
+### Frontend Issues
+
+**Problem:** Build fails on Vercel
+- Check `frontend/package.json` scripts
+- Verify all dependencies are in `dependencies` (not `devDependencies`)
+- Check build logs for missing environment variables
+
+**Problem:** API requests fail (CORS)
+- Verify `NEXT_PUBLIC_API_URL` is correct
+- Check API CORS configuration
 - Test API directly: `curl https://api.rentby.ai/health`
 
-**Build Failures**
-- Check Node.js version matches (v18+)
-- Clear `.next` cache and rebuild
-- Verify all dependencies installed
+**Problem:** Wallet connection fails
+- Ensure wallet is on correct network (devnet/mainnet)
+- Check browser console for errors
+- Verify `NEXT_PUBLIC_SOLANA_RPC_URL` is accessible
 
-## 10. Scaling Considerations
+### Domain Issues
 
-### When Traffic Grows
+**Problem:** Domain not resolving
+- Use `dig rentby.ai` to check DNS records
+- DNS propagation can take up to 48 hours (usually 5-60 minutes)
+- Verify records in domain registrar dashboard
 
-**API (Railway)**
-- Upgrade to higher tier for more resources
-- Add Redis for caching
-- Implement rate limiting
-- Consider load balancer
+**Problem:** SSL certificate not working
+- Vercel/Railway automatically provision SSL
+- May take 15-30 minutes after DNS is set
+- Check for HTTPS redirect in Vercel settings
 
-**Frontend (Vercel)**
-- Vercel auto-scales
-- Enable Analytics to monitor usage
-- Optimize images and assets
-- Implement CDN for static assets
+---
 
-**Solana**
-- Switch to dedicated RPC node (Helius, QuickNode)
-- Optimize transaction batching
-- Implement retry logic
-- Monitor compute units usage
+## Rollback Procedures
 
-## Resources
+### Smart Contract
 
-- Railway Docs: https://docs.railway.app
-- Vercel Docs: https://vercel.com/docs
-- Anchor Docs: https://www.anchor-lang.com/docs
-- Solana Docs: https://docs.solana.com
+```bash
+# Smart contracts are immutable - you cannot rollback
+# Instead, deploy a new version with fixes
+# Update Program ID in all configs
+```
+
+### API
+
+```bash
+# Railway: Redeploy previous deployment in dashboard
+# Heroku: Roll back release
+heroku rollback
+
+# Or redeploy specific commit
+git push heroku <commit-sha>:main --force
+```
+
+### Frontend
+
+```bash
+# Vercel: Rollback in dashboard
+# Or redeploy previous commit
+vercel --prod --force
+```
+
+---
+
+## Security Checklist
+
+- [ ] Smart contract audited (recommended for mainnet)
+- [ ] Environment variables secured (not in git)
+- [ ] HTTPS enabled on all domains
+- [ ] CORS configured for production domains only
+- [ ] Rate limiting enabled on API
+- [ ] Wallet connection secured (CSP headers)
+- [ ] API keys rotated regularly
+- [ ] Error messages don't leak sensitive data
+- [ ] Dependencies updated (npm audit)
+
+---
+
+## Cost Estimates
+
+### Devnet (Free)
+- Solana Devnet: Free
+- Railway: Free tier (500 hours/month)
+- Vercel: Free tier (100 GB bandwidth)
+
+### Mainnet (Production)
+- Solana Program Deployment: ~2-5 SOL (one-time)
+- Solana Transactions: ~0.000005 SOL per transaction
+- Railway: $5-20/month (depending on usage)
+- Vercel: Free (hobby) or $20/month (Pro)
+- Domain: ~$15/year
+- **Total:** ~$25-40/month + domain
+
+---
+
+## Next Steps After Deployment
+
+1. **Test Everything**: Run through full user journey
+2. **Monitor**: Set up alerts for errors/downtime
+3. **Document**: Update README with live URLs
+4. **Announce**: Share on Twitter, Discord, Solana forums
+5. **Iterate**: Collect feedback and improve
+
+---
 
 ## Support
 
-- GitHub Issues: https://github.com/maikershq/rentbyai/issues
-- Email: support@rentby.ai
+- **Documentation**: See `docs/` folder
+- **Issues**: GitHub Issues
+- **Solana Docs**: https://docs.solana.com
+- **Anchor Docs**: https://www.anchor-lang.com
+
+---
+
+**Last Updated**: 2026-02-04

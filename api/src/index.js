@@ -18,12 +18,9 @@ const rentals = [];
 
 // ============ API Routes ============
 
-/**
- * Health check endpoint
- */
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', version: '0.1.0', timestamp: Date.now() });
-});
+// Import health check routes
+import healthRoutes from './routes/health.js';
+app.use('/', healthRoutes);
 
 /**
  * Search for resources

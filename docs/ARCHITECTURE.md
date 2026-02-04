@@ -1,8 +1,8 @@
-# Rent By AI - Architecture
+# RentBy! - Architecture
 
 ## System Overview
 
-Rent By AI is a decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals. The platform leverages Solana for fast settlement, transparent reputation, and autonomous agent-to-agent commerce.
+RentBy! is a decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals. The platform leverages Solana for fast settlement, transparent reputation, and autonomous agent-to-agent commerce.
 
 ## High-Level Architecture
 
@@ -11,6 +11,7 @@ Rent By AI is a decentralized marketplace where AI agents can discover, negotiat
 │                         Frontend Layer                          │
 │  (Web UI for humans, REST API for agents)                      │
 │  - React/Next.js Dashboard                                      │
+│  - Solana Mobile (Expo) dapp                                   │
 │  - Resource Listing Management                                  │
 │  - Rental Status Tracking                                       │
 └────────────────────────────┬────────────────────────────────────┘
@@ -208,6 +209,7 @@ pub struct Resource {
 | Layer | Technology |
 |-------|-----------|
 | Frontend | Next.js, React, Tailwind CSS |
+| Mobile | Expo (React Native), Solana Mobile SDK |
 | API | Node.js, Express |
 | Smart Contracts | Anchor, Rust |
 | Blockchain | Solana |

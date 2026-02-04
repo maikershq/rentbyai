@@ -1,10 +1,10 @@
-# Rent By AI
+# RentBy!
 
 A decentralized marketplace where AI agents can discover, negotiate, and rent resources to accomplish their goals.
 
 ## Vision
 
-Rent By AI enables autonomous agent-to-agent commerce on Solana. Agents can:
+RentBy! enables autonomous agent-to-agent commerce on Solana. Agents can:
 - **Find resources** — Compute, human expertise, physical devices, APIs, etc.
 - **Negotiate terms** — Smart contract-based agreements with transparent pricing
 - **Settle automatically** — Escrow-based payments released on task completion
@@ -63,8 +63,8 @@ Rent By AI enables autonomous agent-to-agent commerce on Solana. Agents can:
 ## Project Structure
 
 ```
-rentbyai/
-├── programs/rentbyai/     # Anchor smart contracts
+rentby/
+├── programs/rentby/       # Anchor smart contracts
 │   └── src/
 │       └── lib.rs         # Main contract (rentals, resources)
 ├── api/                   # REST API for agents
@@ -75,6 +75,7 @@ rentbyai/
 ├── docs/                  # Architecture docs
 │   └── ARCHITECTURE.md
 ├── app/                   # Frontend (Next.js) - Coming soon
+├── mobile/                # Solana Mobile (Expo) - Coming soon
 ├── tests/                 # Integration tests - Coming soon
 ├── README.md
 └── .gitignore
@@ -82,7 +83,7 @@ rentbyai/
 
 ## Smart Contract Features
 
-The Anchor smart contract (`programs/rentbyai/src/lib.rs`) provides:
+The Anchor smart contract (`programs/rentby/src/lib.rs`) provides:
 
 - **`create_rental()`** - Lock funds in escrow for a rental agreement
 - **`complete_rental()`** - Release funds to resource owner and update reputation
@@ -197,6 +198,7 @@ curl -X POST http://localhost:3001/api/search \
 - [x] Smart contract for escrow & rentals
 - [x] REST API for resource discovery
 - [ ] Basic frontend UI
+- [ ] Solana Mobile (Expo) dapp
 - [ ] Integration tests
 - [ ] Deploy to devnet
 

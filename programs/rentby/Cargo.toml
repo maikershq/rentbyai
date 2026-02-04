@@ -1,12 +1,12 @@
 [package]
-name = "rentbyai"
+name = "rentby"
 version = "0.1.0"
-description = "Rent By AI - Agent resource marketplace on Solana"
+description = "RentBy! - Agent resource marketplace on Solana"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "rentbyai"
+name = "rentby"
 
 [features]
 no-entrypoint = []

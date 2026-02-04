@@ -4,7 +4,7 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 declare_id!("R3NT11111111111111111111111111111111111111");
 
 #[program]
-pub mod rentbyai {
+pub mod rentby {
     use super::*;
 
     /// Create a new rental agreement between a renter and a resource owner
@@ -184,7 +184,7 @@ pub struct CreateRental<'info> {
     #[account(
         init,
         payer = renter,
-        space = 8 + RentalAgreement::SPACE,
+        space = RentalAgreement::LEN,
         seeds = [b"rental", renter.key().as_ref(), resource_mint.key().as_ref()],
         bump
     )]
@@ -329,7 +329,7 @@ pub struct CreateResource<'info> {
     #[account(
         init,
         payer = owner,
-        space = 8 + Resource::SPACE,
+        space = 8 + 32 + 32 + 4 + 50 + 4 + 200 + 8 + 4 + 4 + 8 + 1,
         seeds = [b"resource", mint.key().as_ref()],
         bump
     )]
@@ -347,7 +347,6 @@ pub struct CreateResource<'info> {
 // ============ Accounts ============
 
 #[account]
-#[derive(InitSpace)]
 pub struct RentalAgreement {
     pub renter: Pubkey,
     pub resource_owner: Pubkey,
@@ -360,17 +359,14 @@ pub struct RentalAgreement {
 }
 
 impl RentalAgreement {
-    pub const SPACE: usize = 32 + 32 + 32 + 8 + 8 + 8 + 1 + 1;
+    pub const LEN: usize = 8 + 32 + 32 + 32 + 8 + 8 + 8 + 1 + 1;
 }
 
 #[account]
-#[derive(InitSpace)]
 pub struct Resource {
     pub owner: Pubkey,
     pub mint: Pubkey,
-    #[max_len(50)]
     pub resource_type: String,
-    #[max_len(200)]
     pub specs: String,
     pub hourly_rate: u64,
     pub reputation: i32,
@@ -379,13 +375,9 @@ pub struct Resource {
     pub bump: u8,
 }
 
-impl Resource {
-    pub const SPACE: usize = 32 + 32 + 50 + 200 + 8 + 4 + 4 + 8 + 1;
-}
-
 // ============ Enums ============
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, InitSpace)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
 pub enum RentalStatus {
     Active,
     Completed,

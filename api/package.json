@@ -1,7 +1,7 @@
 {
-  "name": "rentbyai-api",
+  "name": "rentby-api",
   "version": "0.1.0",
-  "description": "API for Rent By AI - Agent resource marketplace",
+  "description": "API for RentBy! - Agent resource marketplace",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

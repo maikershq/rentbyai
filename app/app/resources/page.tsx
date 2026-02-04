@@ -1,153 +1,151 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Resource } from '../lib/types';
-import { getResources } from '../lib/api';
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import ResourceCard from '@/components/ResourceCard'
+
+interface Resource {
+  id: string
+  owner: string
+  mint: string
+  resource_type: string
+  specs: string
+  hourly_rate: number
+  reputation: number
+  total_rentals: number
+  created_at: number
+}
 
 export default function ResourcesPage() {
-  const [resources, setResources] = useState<Resource[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [resources, setResources] = useState<Resource[]>([])
+  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     type: '',
     max_price: '',
     min_reputation: '',
-  });
+  })
 
   useEffect(() => {
-    fetchResources();
-  }, []);
+    fetchResources()
+  }, [])
 
   const fetchResources = async () => {
     try {
-      setLoading(true);
-      const data = await getResources({
-        type: filters.type || undefined,
-        max_price: filters.max_price ? Number(filters.max_price) : undefined,
-        min_reputation: filters.min_reputation ? Number(filters.min_reputation) : undefined,
-      });
-      setResources(data.resources);
+      setLoading(true)
+      const params = new URLSearchParams()
+      if (filters.type) params.append('type', filters.type)
+      if (filters.max_price) params.append('max_price', filters.max_price)
+      if (filters.min_reputation) params.append('min_reputation', filters.min_reputation)
+
+      const url = `/api/resources${params.toString() ? '?' + params.toString() : ''}`
+      const response = await fetch(url)
+      const data = await response.json()
+      setResources(data.resources || [])
     } catch (error) {
-      console.error('Error fetching resources:', error);
+      console.error('Error fetching resources:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters({ ...filters, [key]: value })
+  }
 
-  const handleSearch = () => {
-    fetchResources();
-  };
+  const applyFilters = () => {
+    fetchResources()
+  }
 
-  const getTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      compute: 'bg-blue-500',
-      human: 'bg-green-500',
-      device: 'bg-purple-500',
-      api: 'bg-orange-500',
-      default: 'bg-gray-500',
-    };
-    return colors[type] || colors.default;
-  };
+  const clearFilters = () => {
+    setFilters({ type: '', max_price: '', min_reputation: '' })
+    setTimeout(fetchResources, 0)
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-white/5 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-white">
-                RentBy
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">R</span>
+              </div>
+              <span className="text-2xl font-bold gradient-text">RentBy</span>
+            </Link>
+            <nav className="flex space-x-6">
+              <Link href="/" className="text-gray-700 hover:text-primary-600 transition-colors">
+                Home
               </Link>
-            </div>
-            <div className="flex space-x-4">
-              <Link
-                href="/resources"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Resources
-              </Link>
-              <Link
-                href="/rentals"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
+              <Link href="/rentals" className="text-gray-700 hover:text-primary-600 transition-colors">
                 Rentals
               </Link>
-              <Link
-                href="/create-resource"
-                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-              >
+              <Link href="/create" className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
                 List Resource
               </Link>
-            </div>
+            </nav>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">Browse Resources</h1>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">Browse Resources</h1>
 
         {/* Filters */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/10">
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          <h2 className="text-lg font-semibold mb-4">Filters</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
-                Type
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Resource Type
               </label>
               <select
-                name="type"
                 value={filters.type}
-                onChange={handleFilterChange}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                onChange={(e) => handleFilterChange('type', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">All Types</option>
                 <option value="compute">Compute</option>
                 <option value="human">Human</option>
                 <option value="device">Device</option>
-                <option value="api">API</option>
               </select>
             </div>
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
-                Max Price (SOL/hour)
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Max Price ($/hour)
               </label>
               <input
                 type="number"
-                name="max_price"
                 value={filters.max_price}
-                onChange={handleFilterChange}
-                placeholder="No limit"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                onChange={(e) => handleFilterChange('max_price', e.target.value)}
+                placeholder="Enter max price"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Min Reputation
               </label>
               <input
                 type="number"
-                name="min_reputation"
                 value={filters.min_reputation}
-                onChange={handleFilterChange}
-                placeholder="0"
-                step="0.1"
-                max="5"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                onChange={(e) => handleFilterChange('min_reputation', e.target.value)}
+                placeholder="Enter min reputation"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-            <div className="flex items-end">
+            <div className="flex items-end space-x-2">
               <button
-                onClick={handleSearch}
-                className="w-full bg-white text-purple-900 px-6 py-2 rounded-lg font-semibold hover:bg-white/90 transition-colors"
+                onClick={applyFilters}
+                className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
               >
-                Search
+                Apply Filters
+              </button>
+              <button
+                onClick={clearFilters}
+                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Clear
               </button>
             </div>
           </div>
@@ -155,64 +153,21 @@ export default function ResourcesPage() {
 
         {/* Resources Grid */}
         {loading ? (
-          <div className="text-center text-white/80">Loading resources...</div>
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          </div>
         ) : resources.length === 0 ? (
-          <div className="text-center text-white/80">
-            <p className="text-xl mb-4">No resources found</p>
-            <Link
-              href="/create-resource"
-              className="text-white hover:underline"
-            >
-              Be the first to list a resource
-            </Link>
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No resources found matching your filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {resources.map((resource) => (
-              <div
-                key={resource.id}
-                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/30 transition-all"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <span
-                    className={`${getTypeColor(
-                      resource.resource_type,
-                    )} text-white text-xs px-2 py-1 rounded-full`}
-                  >
-                    {resource.resource_type}
-                  </span>
-                  <div className="flex items-center gap-1 text-yellow-400">
-                    <span className="text-lg">⭐</span>
-                    <span className="text-white font-semibold">
-                      {resource.reputation.toFixed(1)}
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2 line-clamp-2">
-                  {resource.specs}
-                </h3>
-                <p className="text-white/60 text-sm mb-4">
-                  {resource.total_rentals} rental{resource.total_rentals !== 1 ? 's' : ''}
-                </p>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white/60 text-sm">Hourly Rate</p>
-                    <p className="text-2xl font-bold text-white">
-                      {resource.hourly_rate} SOL
-                    </p>
-                  </div>
-                  <Link
-                    href={`/resources/${resource.id}`}
-                    className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
+              <ResourceCard key={resource.id} resource={resource} />
             ))}
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }

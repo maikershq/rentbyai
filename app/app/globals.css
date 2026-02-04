@@ -25,3 +25,14 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom styles for gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent;
+}

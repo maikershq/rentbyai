@@ -74,12 +74,23 @@ rentby/
 │   │   └── api.test.js
 │   ├── package.json
 │   └── API.md            # API documentation
+├── app/                   # Frontend (Next.js 14)
+│   ├── app/
+│   │   ├── page.tsx       # Home page
+│   │   ├── resources/     # Resources pages
+│   │   ├── rentals/       # Rentals page
+│   │   ├── create/        # Create resource page
+│   │   └── layout.tsx     # Root layout
+│   ├── components/        # React components
+│   │   ├── ResourceCard.tsx
+│   │   └── SearchBar.tsx
+│   ├── package.json
+│   └── README.md        # Frontend docs
 ├── docs/                  # Architecture docs
 │   └── ARCHITECTURE.md
 ├── tests/                 # Smart contract integration tests
 │   ├── rentby.ts         # Anchor test suite
 │   └── README.md         # Testing guide
-├── app/                   # Frontend (Next.js) - Coming soon
 ├── mobile/                # Solana Mobile (Expo) - Coming soon
 ├── README.md
 └── .gitignore
@@ -190,20 +201,20 @@ curl -X POST http://localhost:3001/api/search \
 
 - ✅ Smart contract implementation (Rust + Anchor)
 - ✅ REST API implementation (Node.js + Express)
+- ✅ Frontend UI (Next.js + React + Tailwind CSS)
 - ✅ API documentation
 - ✅ Architecture documentation
 - ✅ Smart contract integration tests (Anchor)
 - ✅ API unit tests (Jest + Supertest)
-- 🚧 Frontend UI (Next.js) - Coming soon
 - 🚧 Production deployment - Coming soon
 
 ## Roadmap
 
-### Phase 1: Core Platform (Current)
+### Phase 1: Core Platform (✅ Complete)
 - [x] Smart contract for escrow & rentals
 - [x] REST API for resource discovery
+- [x] Frontend UI (Next.js)
 - [x] Integration tests (smart contract + API)
-- [ ] Basic frontend UI
 - [ ] Solana Mobile (Expo) dapp
 - [ ] Deploy to devnet
 

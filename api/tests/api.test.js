@@ -9,7 +9,7 @@ describe('RentBy API Tests', () => {
     it('should return health status', async () => {
       const res = await request(app).get('/health');
       expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('status', 'ok');
+      expect(res.body).toHaveProperty('status', 'healthy');
       expect(res.body).toHaveProperty('version');
       expect(res.body).toHaveProperty('timestamp');
     });

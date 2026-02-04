@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Resource } from '../lib/types';
-import { getResources } from '../lib/api';
+import { Resource } from '../../lib/types';
+import { getResources } from '../../lib/api';
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState<Resource[]>([]);

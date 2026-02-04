@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createResource } from '../lib/api';
+import { createResource } from '../../lib/api';
 
 export default function CreateResourcePage() {
   const router = useRouter();

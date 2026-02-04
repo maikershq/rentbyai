@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createRental } from '../../lib/api';
+import { createRental } from '../lib/api';
 
 export default function RentResourceForm({ resourceId, resource }: { resourceId: string; resource: any }) {
   const router = useRouter();

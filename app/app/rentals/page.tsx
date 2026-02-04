@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Rental } from '../lib/types';
-import { getRentals } from '../lib/api';
+import { Rental } from '../../lib/types';
+import { getRentals } from '../../lib/api';
 
 export default function RentalsPage() {
   const [rentals, setRentals] = useState<Rental[]>([]);

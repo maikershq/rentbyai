@@ -53,10 +53,10 @@ app.get('/api/resources', (req, res) => {
 });
 
 /**
- * Get a specific resource by ID (mint address)
+ * Get a specific resource by ID or mint address
  */
 app.get('/api/resources/:id', (req, res) => {
-  const resource = resources.find(r => r.mint === req.params.id);
+  const resource = resources.find(r => r.id === req.params.id || r.mint === req.params.id);
 
   if (!resource) {
     return res.status(404).json({ error: 'Resource not found' });

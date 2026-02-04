@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Stats } from '../lib/types';
-import { getStats } from '../lib/api';
+import { Stats } from '../../lib/types';
+import { getStats } from '../../lib/api';
 
 export default function StatsPage() {
   const [stats, setStats] = useState<Stats | null>(null);

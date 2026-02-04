@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Resource } from '../lib/types';
-import { search } from '../lib/api';
+import { Resource } from '../../lib/types';
+import { search } from '../../lib/api';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');

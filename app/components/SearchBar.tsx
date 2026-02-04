@@ -23,11 +23,11 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search for resources (e.g., 'GPU for ML training', 'AI consultant')"
-        className="w-full px-6 py-4 rounded-xl text-gray-900 placeholder-gray-500 bg-white border-2 border-transparent focus:border-primary-500 focus:outline-none shadow-lg text-lg"
+        className="w-full px-6 py-4 rounded-xl text-gray-900 placeholder-gray-500 bg-white border-2 border-transparent focus:border-brand-purple focus:shadow-lg focus:shadow-brand-purple/20 focus:outline-none shadow-lg text-lg transition-all"
       />
       <button
         type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-purple to-brand-green text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all font-medium shadow-lg hover:shadow-glow"
       >
         Search
       </button>

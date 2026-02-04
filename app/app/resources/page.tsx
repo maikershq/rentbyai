@@ -54,70 +54,68 @@ export default function ResourcesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen bg-dark-surface">
       {/* Navigation */}
-      <nav className="border-b border-white/10 bg-white/5 backdrop-blur-sm">
+      <nav className="fixed top-0 w-full z-50 border-b border-dark-border bg-dark-surface/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-white">
-                RentBy
-              </Link>
-            </div>
-            <div className="flex space-x-4">
+            <Link href="/" className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold gradient-text">RentBy</h1>
+            </Link>
+            <div className="flex items-center space-x-4">
               <Link
                 href="/resources"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors border-b-2 border-brand-purple"
               >
                 Resources
               </Link>
               <Link
                 href="/rentals"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Rentals
               </Link>
               <Link
                 href="/stats"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Stats
               </Link>
               <Link
-                href="/search"
-                className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Search
-              </Link>
-              <Link
                 href="/create-resource"
-                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                className="bg-gradient-to-r from-brand-purple to-brand-green text-white px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-all shadow-lg hover:shadow-glow"
               >
                 List Resource
               </Link>
+              <button className="bg-white/5 border border-dark-border text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-white/10 transition-all">
+                Connect Wallet
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">Browse Resources</h1>
+          <div>
+            <h1 className="text-4xl font-bold text-text-primary mb-2">Browse Resources</h1>
+            <p className="text-text-secondary">{resources.length} resources available</p>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/10">
+        <div className="glass-card rounded-xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
+              <label className="block text-text-secondary text-sm font-medium mb-2">
                 Type
               </label>
               <select
                 name="type"
                 value={filters.type}
                 onChange={handleFilterChange}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-purple"
               >
                 <option value="">All Types</option>
                 <option value="compute">Compute</option>
@@ -127,7 +125,7 @@ export default function ResourcesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
+              <label className="block text-text-secondary text-sm font-medium mb-2">
                 Max Price (SOL/hour)
               </label>
               <input
@@ -136,11 +134,11 @@ export default function ResourcesPage() {
                 value={filters.max_price}
                 onChange={handleFilterChange}
                 placeholder="No limit"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-purple"
               />
             </div>
             <div>
-              <label className="block text-white/80 text-sm font-medium mb-2">
+              <label className="block text-text-secondary text-sm font-medium mb-2">
                 Min Reputation
               </label>
               <input
@@ -151,13 +149,13 @@ export default function ResourcesPage() {
                 placeholder="0"
                 step="0.1"
                 max="5"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-purple"
               />
             </div>
             <div className="flex items-end">
               <button
                 onClick={handleSearch}
-                className="w-full bg-white text-purple-900 px-6 py-2 rounded-lg font-semibold hover:bg-white/90 transition-colors"
+                className="w-full bg-gradient-to-r from-brand-purple to-brand-green text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-glow"
               >
                 Search
               </button>
@@ -167,15 +165,15 @@ export default function ResourcesPage() {
 
         {/* Resources Grid */}
         {loading ? (
-          <div className="text-center text-white/80">Loading resources...</div>
+          <div className="text-center text-text-secondary">Loading resources...</div>
         ) : resources.length === 0 ? (
-          <div className="text-center text-white/80">
+          <div className="text-center text-text-secondary glass-card rounded-xl p-12">
             <p className="text-xl mb-4">No resources found</p>
             <Link
               href="/create-resource"
-              className="text-white hover:underline"
+              className="text-brand-purple hover:text-brand-green transition-colors font-medium"
             >
-              Be the first to list a resource
+              Be the first to list a resource →
             </Link>
           </div>
         ) : (
@@ -184,36 +182,37 @@ export default function ResourcesPage() {
               <Link
                 key={resource.id}
                 href={`/resources/${resource.id}`}
-                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/30 transition-all"
+                className="group glass-card rounded-xl p-6 border border-dark-border hover:border-brand-purple/50 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-purple/20"
               >
                 <div className="flex justify-between items-start mb-4">
                   <span
-                    className={`${getTypeColor(
-                      resource.resource_type,
-                    )} text-white text-xs px-2 py-1 rounded-full`}
+                    className="bg-brand-purple/20 text-brand-purple border border-brand-purple/30 text-xs px-2 py-1 rounded-full"
                   >
                     {resource.resource_type}
                   </span>
-                  <div className="flex items-center gap-1 text-yellow-400">
-                    <span className="text-lg">⭐</span>
-                    <span className="text-white font-semibold">
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-400 text-sm">⭐</span>
+                    <span className="text-text-primary font-semibold">
                       {resource.reputation.toFixed(1)}
                     </span>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2 line-clamp-2">
+                <h3 className="text-xl font-semibold text-text-primary mb-2 line-clamp-2">
                   {resource.specs}
                 </h3>
-                <p className="text-white/60 text-sm mb-4">
+                <p className="text-text-tertiary text-sm mb-4">
                   {resource.total_rentals} rental{resource.total_rentals !== 1 ? 's' : ''}
                 </p>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center border-t border-dark-border pt-4">
                   <div>
-                    <p className="text-white/60 text-sm">Hourly Rate</p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-text-tertiary text-sm">Hourly Rate</p>
+                    <p className="text-2xl font-bold text-text-primary">
                       {resource.hourly_rate} SOL
                     </p>
                   </div>
+                  <span className="text-brand-purple text-sm font-medium group-hover:translate-x-1 transition-transform">
+                    View →
+                  </span>
                 </div>
               </Link>
             ))}

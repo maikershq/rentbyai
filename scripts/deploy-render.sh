@@ -1,0 +1,32 @@
+#!/bin/bash
+# Deploy RentBy API to Render
+set -e
+
+echo "🚀 Deploying RentBy API to Render..."
+
+echo ""
+echo "📋 Render Deployment Instructions:"
+echo ""
+echo "1. Go to https://dashboard.render.com/new/web"
+echo "2. Connect your GitHub repository: maikershq/rentby"
+echo "3. Render will auto-detect render.yaml configuration"
+echo "4. Click 'Create Web Service'"
+echo ""
+echo "OR use Render CLI (if installed):"
+echo ""
+echo "   # Install Render CLI"
+echo "   npm install -g render-cli"
+echo ""
+echo "   # Deploy"
+echo "   render services create --repo maikershq/rentby"
+echo ""
+echo "✅ The render.yaml file in the repo root has all the config:"
+echo "   - Service name: rentby-api"
+echo "   - Environment: Node.js"
+echo "   - Build: cd api && npm install"
+echo "   - Start: cd api && npm start"
+echo "   - Health check: /health"
+echo "   - Plan: Free tier"
+echo ""
+echo "📝 Environment variables are pre-configured in render.yaml"
+echo "🌐 After deployment, your API will be at: https://rentby-api.onrender.com"

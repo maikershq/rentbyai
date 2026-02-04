@@ -1,0 +1,36 @@
+{
+  "name": "RentBy API",
+  "description": "Decentralized AI agent resource rental marketplace API on Solana",
+  "repository": "https://github.com/maikershq/rentby",
+  "logo": "https://rentby.ai/logo.png",
+  "keywords": ["solana", "ai", "marketplace", "web3", "rental"],
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "PORT": {
+      "description": "Port to run the API on",
+      "value": "3001"
+    },
+    "SOLANA_RPC_URL": {
+      "description": "Solana RPC endpoint (devnet or mainnet)",
+      "value": "https://api.devnet.solana.com"
+    },
+    "PROGRAM_ID": {
+      "description": "RentBy smart contract program ID",
+      "value": "HmRuwkcYtKaCmx1uXycwCrjVcYBH5o9KGNd6ZF3S6Eq3"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+}

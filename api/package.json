@@ -1,35 +1,14 @@
 {
-  "name": "rentby-api",
+  "name": "rentby-api-vercel",
   "version": "0.1.0",
-  "description": "API for RentBy - Agent resource marketplace",
-  "main": "src/index.js",
+  "description": "Vercel serverless API for RentBy",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "start": "node index.js"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.87.0",
-    "bs58": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-rate-limit": "^8.2.1",
-    "morgan": "^1.10.1",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
-  },
-  "keywords": [
-    "solana",
-    "rental",
-    "agents",
-    "marketplace"
-  ],
-  "license": "MIT",
-  "devDependencies": {
-    "jest": "^30.2.0",
-    "supertest": "^7.2.2"
+    "express": "^4.18.2"
   }
 }

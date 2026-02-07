@@ -203,11 +203,11 @@ RentBy is now feature-complete with smart contracts, API, frontend, and tests!
    - Wallet payment integration
    - Status tracking
 
-### Long Term (Future)
-7. **Solana Mobile**
+7. **Solana Mobile (Phase 2)**
    - Expo dapp for Android
    - Target Seeker device users
 
+### Long Term (Future)
 8. **Enhanced Features**
    - Natural language embedding search
    - Multi-resource bundles

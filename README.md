@@ -91,7 +91,7 @@ rentby/
 ├── tests/                 # Smart contract integration tests
 │   ├── rentby.ts         # Anchor test suite
 │   └── README.md         # Testing guide
-├── mobile/                # Solana Mobile (Expo) - Coming soon
+├── mobile/                # Solana Mobile (Expo) - Phase 2
 ├── README.md
 └── .gitignore
 ```
@@ -258,10 +258,10 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instruction
 - [x] REST API for resource discovery
 - [x] Frontend UI (Next.js)
 - [x] Integration tests (smart contract + API)
-- [ ] Solana Mobile (Expo) dapp
 - [ ] Deploy to devnet (ready - run `./scripts/deploy-devnet.sh`)
 
 ### Phase 2: Enhanced Features
+- [ ] Solana Mobile (Expo) dapp
 - [ ] Natural language embedding search
 - [ ] Multi-resource bundle rentals
 - [ ] Subscription model for recurring rentals

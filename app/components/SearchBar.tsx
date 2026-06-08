@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 interface SearchBarProps {
-  onSearch: (query: string) => void
+  onSearch?: (query: string) => void
 }
 
 export default function SearchBar({ onSearch }: SearchBarProps) {
@@ -12,7 +12,11 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (query.trim()) {
-      onSearch(query)
+      if (onSearch) {
+        onSearch(query)
+      } else {
+        window.location.href = `/resources?search=${encodeURIComponent(query)}`
+      }
     }
   }
 

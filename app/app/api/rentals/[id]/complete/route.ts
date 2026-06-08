@@ -3,9 +3,10 @@ import { rentals } from '@/lib/data-store';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const rental = rentals.find(r => r.id === params.id);
+  const { id } = await params;
+  const rental = rentals.find(r => r.id === id);
 
   if (!rental) {
     return NextResponse.json(

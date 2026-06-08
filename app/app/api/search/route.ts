@@ -7,7 +7,7 @@ interface ScoredResource extends Resource {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { query } = body;
+  const query = typeof body.query === 'string' ? body.query : '';
 
   if (!query) {
     return NextResponse.json(
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   }
 
   const queryLower = query.toLowerCase();
-  const keywords = queryLower.split(/\s+/);
+  const keywords: string[] = queryLower.split(/\s+/);
 
   const scoredResources: ScoredResource[] = resources.map((resource: Resource) => {
     let score = 0;

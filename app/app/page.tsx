@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import NewHero from '../../components/NewHero';
+import NewHero from '../components/NewHero';
 
 export default function Home() {
   return (

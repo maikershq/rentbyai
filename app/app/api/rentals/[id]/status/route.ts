@@ -3,12 +3,13 @@ import { rentals } from '@/lib/data-store';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await request.json();
   const { status } = body;
 
-  const rental = rentals.find(r => r.id === params.id);
+  const rental = rentals.find(r => r.id === id);
 
   if (!rental) {
     return NextResponse.json(

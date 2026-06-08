@@ -1,15 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { Rentby } from "../target/types/rentby";
-import {
-  TOKEN_PROGRAM_ID,
-  createMint,
-  createAccount,
-  mintTo,
-} from "@solana/spl-token";
-import { assert } from "chai";
+import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
+import { Rentby } from '../target/types/rentby';
+import { TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
+import { assert } from 'chai';
 
-describe("rentby", () => {
+describe('rentby', () => {
   // Configure the client to use the local cluster
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -25,62 +20,53 @@ describe("rentby", () => {
   let rentalAccount: anchor.web3.PublicKey;
   let escrowTokenAccount: anchor.web3.PublicKey;
   let escrowAuthority: anchor.web3.PublicKey;
+  let resourceToken: Token;
 
   const resourceOwner = wallet.publicKey;
   const renter = anchor.web3.Keypair.generate();
 
-  const resourceType = "compute";
-  const resourceSpecs = "4x NVIDIA A100 80GB";
+  const resourceType = 'compute';
+  const resourceSpecs = '4x NVIDIA A100 80GB';
   const hourlyRate = 5_000_000; // 5 USDC (assuming 6 decimals)
 
   before(async () => {
     // Airdrop SOL to renter
     const airdropSignature = await connection.requestAirdrop(
       renter.publicKey,
-      2 * anchor.web3.LAMPORTS_PER_SOL
+      2 * anchor.web3.LAMPORTS_PER_SOL,
     );
     await connection.confirmTransaction(airdropSignature);
 
     // Create a new token mint for the resource
-    resourceMint = await createMint(
+    resourceToken = await Token.createMint(
       connection,
       wallet.payer,
       wallet.publicKey,
       null,
-      6
+      6,
+      TOKEN_PROGRAM_ID,
     );
+    resourceMint = resourceToken.publicKey;
 
     // Create token accounts for resource owner and renter
-    ownerTokenAccount = await createAccount(
-      connection,
-      wallet.payer,
-      resourceMint,
-      resourceOwner
-    );
+    ownerTokenAccount = await resourceToken.createAccount(resourceOwner);
 
-    renterTokenAccount = await createAccount(
-      connection,
-      wallet.payer,
-      resourceMint,
-      renter.publicKey
-    );
+    renterTokenAccount = await resourceToken.createAccount(renter.publicKey);
 
     // Mint tokens to renter
-    await mintTo(
-      connection,
-      wallet.payer,
-      resourceMint,
+    await resourceToken.mintTo(
       renterTokenAccount,
       wallet.publicKey,
-      100_000_000 // 100 tokens
+      [wallet.payer],
+      100_000_000, // 100 tokens
     );
   });
 
-  it("Creates a new resource", async () => {
+  it('Creates a new resource', async () => {
     // Derive resource PDA
     [resourceAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("resource"), resourceMint.toBuffer()],
-      program.programId
+      [Buffer.from('resource'), resourceMint.toBuffer()],
+      program.programId,
     );
 
     // Create resource
@@ -95,7 +81,7 @@ describe("rentby", () => {
       })
       .rpc();
 
-    console.log("Create resource transaction:", tx);
+    console.log('Create resource transaction:', tx);
 
     // Fetch and verify resource account
     const resource = await program.account.resource.fetch(resourceAccount);
@@ -109,28 +95,27 @@ describe("rentby", () => {
     assert.equal(resource.totalRentals.toNumber(), 0);
   });
 
-  it("Creates a rental agreement with escrow", async () => {
+  it('Creates a rental agreement with escrow', async () => {
     const amount = new anchor.BN(25_000_000); // 25 tokens (5 hours at 5 tokens/hour)
     const duration = new anchor.BN(3600); // 1 hour
 
     // Derive rental PDA
     [rentalAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("rental"), renter.publicKey.toBuffer(), resourceMint.toBuffer()],
-      program.programId
+      [
+        Buffer.from('rental'),
+        renter.publicKey.toBuffer(),
+        resourceMint.toBuffer(),
+      ],
+      program.programId,
     );
 
     // Derive escrow authority and token account
     [escrowAuthority] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), rentalAccount.toBuffer()],
-      program.programId
+      [Buffer.from('escrow'), rentalAccount.toBuffer()],
+      program.programId,
     );
 
-    escrowTokenAccount = await createAccount(
-      connection,
-      wallet.payer,
-      resourceMint,
-      escrowAuthority
-    );
+    escrowTokenAccount = await resourceToken.createAccount(escrowAuthority);
 
     // Create rental
     const tx = await program.methods
@@ -151,34 +136,28 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    console.log("Create rental transaction:", tx);
+    console.log('Create rental transaction:', tx);
 
     // Fetch and verify rental account
     const rental = await program.account.rentalAgreement.fetch(rentalAccount);
 
     assert.equal(rental.renter.toString(), renter.publicKey.toString());
-    assert.equal(
-      rental.resourceOwner.toString(),
-      resourceOwner.toString()
-    );
-    assert.equal(
-      rental.resourceMint.toString(),
-      resourceMint.toString()
-    );
+    assert.equal(rental.resourceOwner.toString(), resourceOwner.toString());
+    assert.equal(rental.resourceMint.toString(), resourceMint.toString());
     assert.equal(rental.escrowAmount.toNumber(), amount.toNumber());
     assert.equal(rental.status.active, true); // Active status
 
     // Verify escrow balance
     const escrowBalance = await connection.getTokenAccountBalance(
-      escrowTokenAccount
+      escrowTokenAccount,
     );
     assert.equal(escrowBalance.value.amount, amount.toString());
   });
 
-  it("Completes a rental and releases escrow", async () => {
+  it('Completes a rental and releases escrow', async () => {
     // Get initial owner balance
     const ownerBalanceBefore = await connection.getTokenAccountBalance(
-      ownerTokenAccount
+      ownerTokenAccount,
     );
 
     // Complete rental (can be called by renter or owner)
@@ -197,7 +176,7 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    console.log("Complete rental transaction:", tx);
+    console.log('Complete rental transaction:', tx);
 
     // Fetch and verify rental status
     const rental = await program.account.rentalAgreement.fetch(rentalAccount);
@@ -210,7 +189,7 @@ describe("rentby", () => {
 
     // Verify escrow released to owner
     const ownerBalanceAfter = await connection.getTokenAccountBalance(
-      ownerTokenAccount
+      ownerTokenAccount,
     );
     const ownerBalanceDiff =
       parseInt(ownerBalanceAfter.value.amount) -
@@ -218,26 +197,30 @@ describe("rentby", () => {
     assert.equal(ownerBalanceDiff, rental.escrowAmount.toNumber());
   });
 
-  it("Creates and disputes a rental", async () => {
+  it('Creates and disputes a rental', async () => {
     const amount = new anchor.BN(10_000_000); // 10 tokens
     const duration = new anchor.BN(1800); // 30 minutes
 
     // Create new rental for dispute test
     [rentalAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("rental"), renter.publicKey.toBuffer(), resourceMint.toBuffer()],
-      program.programId
+      [
+        Buffer.from('rental'),
+        renter.publicKey.toBuffer(),
+        resourceMint.toBuffer(),
+      ],
+      program.programId,
     );
 
     [escrowAuthority] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), rentalAccount.toBuffer()],
-      program.programId
+      [Buffer.from('escrow'), rentalAccount.toBuffer()],
+      program.programId,
     );
 
     escrowTokenAccount = await createAccount(
       connection,
       wallet.payer,
       resourceMint,
-      escrowAuthority
+      escrowAuthority,
     );
 
     // Create rental
@@ -270,19 +253,21 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    console.log("Dispute rental transaction:", tx);
+    console.log('Dispute rental transaction:', tx);
 
     // Verify disputed status
     const rental = await program.account.rentalAgreement.fetch(rentalAccount);
     assert.equal(rental.status.disputed, true);
   });
 
-  it("Resolves dispute by refunding to renter", async () => {
+  it('Resolves dispute by refunding to renter', async () => {
     const renterBalanceBefore = await connection.getTokenAccountBalance(
-      renterTokenAccount
+      renterTokenAccount,
     );
 
-    const resourceBefore = await program.account.resource.fetch(resourceAccount);
+    const resourceBefore = await program.account.resource.fetch(
+      resourceAccount,
+    );
 
     // Resolve dispute with refund
     const tx = await program.methods
@@ -301,7 +286,7 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    console.log("Resolve dispute (refund) transaction:", tx);
+    console.log('Resolve dispute (refund) transaction:', tx);
 
     // Verify resolved status
     const rental = await program.account.rentalAgreement.fetch(rentalAccount);
@@ -311,12 +296,12 @@ describe("rentby", () => {
     const resourceAfter = await program.account.resource.fetch(resourceAccount);
     assert.equal(
       resourceAfter.reputation.toNumber(),
-      resourceBefore.reputation.toNumber() - 1
+      resourceBefore.reputation.toNumber() - 1,
     );
 
     // Verify refund to renter
     const renterBalanceAfter = await connection.getTokenAccountBalance(
-      renterTokenAccount
+      renterTokenAccount,
     );
     const renterBalanceDiff =
       parseInt(renterBalanceAfter.value.amount) -
@@ -324,26 +309,30 @@ describe("rentby", () => {
     assert.equal(renterBalanceDiff, rental.escrowAmount.toNumber());
   });
 
-  it("Resolves dispute by paying owner", async () => {
+  it('Resolves dispute by paying owner', async () => {
     const amount = new anchor.BN(10_000_000);
     const duration = new anchor.BN(1800);
 
     // Create new rental
     [rentalAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("rental"), renter.publicKey.toBuffer(), resourceMint.toBuffer()],
-      program.programId
+      [
+        Buffer.from('rental'),
+        renter.publicKey.toBuffer(),
+        resourceMint.toBuffer(),
+      ],
+      program.programId,
     );
 
     [escrowAuthority] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), rentalAccount.toBuffer()],
-      program.programId
+      [Buffer.from('escrow'), rentalAccount.toBuffer()],
+      program.programId,
     );
 
     escrowTokenAccount = await createAccount(
       connection,
       wallet.payer,
       resourceMint,
-      escrowAuthority
+      escrowAuthority,
     );
 
     await program.methods
@@ -374,7 +363,9 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    const resourceBefore = await program.account.resource.fetch(resourceAccount);
+    const resourceBefore = await program.account.resource.fetch(
+      resourceAccount,
+    );
 
     // Resolve dispute with payment to owner
     const tx = await program.methods
@@ -393,13 +384,13 @@ describe("rentby", () => {
       .signers([renter])
       .rpc();
 
-    console.log("Resolve dispute (pay owner) transaction:", tx);
+    console.log('Resolve dispute (pay owner) transaction:', tx);
 
     // Verify resource reputation increased
     const resourceAfter = await program.account.resource.fetch(resourceAccount);
     assert.equal(
       resourceAfter.reputation.toNumber(),
-      resourceBefore.reputation.toNumber() + 1
+      resourceBefore.reputation.toNumber() + 1,
     );
   });
 });
